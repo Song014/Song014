@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- sql Mapper -->
+<mapper namespace="BoardDAO">
+		
+	<select id="getBoardList" resultType="board">
+		SELECT * 
+		FROM board_modu 
+		WHERE 1=1 
+		<if test="searchKeyword != null"> 
+			AND hashtag LIKE '%'||#{searchKeyword}||'%' 
+		</if>
+		ORDER BY bno DESC 
+	</select>
+	
+	<select id="getBoard" parameterType="board" resultType="board">
+		<![CDATA[
+		select * from board_modu where bno=#{bno}
+		]]>
+	</select>
+
+	<insert id="insertBoard">
+		<![CDATA[
+		INSERT INTO board_modu (bno, title, id,content,hashtag,img)
+		VALUES(board_modu_seq.NEXTVAL,#{title},#{id},#{content},#{hashtag},#{img, jdbcType=VARCHAR})
+		]]>
+	</insert>
+	
+	<update id="updateBoard">
+		<![CDATA[
+		update board_modu set title=#{title}, content=#{content}, hashtag=#{hashtag},img=#{img, jdbcType=VARCHAR}  where bno=#{bno}
+		]]>
+	</update>
+	
+	<update id="updateReadCount">
+		<![CDATA[
+		update board_modu set readcount=readcount+1 where bno=#{bno}
+		]]>
+	</update>
+	
+	<delete id="deleteBoard">
+		<![CDATA[
+		delete from board_modu where bno= #{bno}
+		]]>
+	</delete>
+	
+	<insert id="insertComment">
+		<![CDATA[
+		INSERT INTO modu_comment (comment_num ,bno,id,content)
+		VALUES(modu_comment_seq.NEXTVAL,#{bno},#{id},#{content})
+		]]>
+	</insert>
+	
+	<select id="getComment" resultType="comment">
+		<![CDATA[
+		select * 
+		from modu_comment 
+		where bno=#{bno}
+		]]>
+	</select>
+	
+	<update id="updateCommentCount">
+		<![CDATA[
+		update board_modu set comment_count=comment_count+1 where bno=#{bno}
+		]]>
+	</update>
+	
+	<update id="updateLike">
+		<![CDATA[
+		update board_modu set like_it=like_it +1 where bno=#{bno}
+		]]>
+	</update>
+	
+
+	<select id="selectLikeCount" resultType="int">
+		<![CDATA[
+		select like_it from board_modu where bno=#{bno}
+		]]>
+	</select>
+
+	
+</mapper>
